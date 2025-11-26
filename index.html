@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DXZ Software - Secure, Scalable, Smarter</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Montserrat:wght@300;400;500;600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- VARIABLES & RESET --- */
+        :root {
+            --bg-dark: #000000;
+            --bg-card: #111111;
+            --bg-glass: rgba(255, 255, 255, 0.05);
+            --primary-red: #FC3F37;
+            --text-white: #FBFBFB;
+            --text-gray: #707070;
+            --font-poppins: 'Poppins', sans-serif;
+            --font-montserrat: 'Montserrat', sans-serif;
+            --font-inter: 'Inter', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-white);
+            font-family: var(--font-montserrat);
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        ul { list-style: none; }
+        img { max-width: 100%; display: block; }
+
+        /* --- ANIMATIONS --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- GLOW EFFECTS --- */
+        .glow-blob {
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: rgba(252, 63, 55, 0.1);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 90px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 5%;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .hamburger {
+            cursor: pointer;
+            width: 40px;
+            height: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .hamburger span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background: var(--text-white);
+            transition: 0.4s;
+        }
+        
+        .hamburger:hover span { background: var(--primary-red); }
+
+        .logo img { height: 50px; }
+
+        .cta-btn-nav {
+            font-family: var(--font-poppins);
+            font-size: 16px;
+            border-bottom: 2px solid var(--text-white);
+            padding-bottom: 2px;
+        }
+        .cta-btn-nav:hover { color: var(--primary-red); border-color: var(--primary-red); }
+
+        /* --- FULLSCREEN MENU OVERLAY --- */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: #181818;
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: translateY(-100%);
+            transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        .menu-overlay.open {
+            transform: translateY(0);
+        }
+
+        .menu-content {
+            text-align: center;
+        }
+
+        .menu-link {
+            display: block;
+            font-family: var(--font-poppins);
+            font-size: 48px;
+            font-weight: 500;
+            text-transform: uppercase;
+            color: var(--text-white);
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .menu-link::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: var(--text-white);
+            transition: width 0.3s;
+            margin: 0 auto;
+        }
+        .menu-link:hover::after { width: 100%; }
+
+        .close-menu {
+            position: absolute;
+            top: 30px;
+            right: 5%;
+            font-size: 40px;
+            cursor: pointer;
+            color: var(--text-white);
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 5% 50px;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            flex: 1;
+            z-index: 2;
+        }
+
+        .hero h2 {
+            font-family: var(--font-poppins);
+            font-weight: 500;
+            font-size: 24px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .hero h1 {
+            font-family: var(--font-poppins);
+            font-weight: 600;
+            font-size: 72px;
+            line-height: 1.1;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        
+        .hero h1 span { color: var(--primary-red); }
+
+        .hero h3 {
+            font-family: var(--font-poppins);
+            font-weight: 500;
+            font-size: 36px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            max-width: 500px;
+            margin-bottom: 40px;
+        }
+
+        .hero-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 32px;
+            border: 2px solid var(--text-white);
+            border-radius: 4px;
+            font-family: var(--font-poppins);
+            transition: 0.3s;
+        }
+
+        .hero-btn:hover {
+            background: var(--text-white);
+            color: var(--bg-dark);
+        }
+
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-image img {
+            border-radius: 300px;
+            max-width: 450px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        /* --- SECTIONS GENERAL --- */
+        section {
+            padding: 100px 5%;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-family: var(--font-inter);
+            font-weight: 700;
+            font-size: 64px;
+        }
+        
+        .text-red { color: var(--primary-red); }
+        
+        .section-subtitle {
+            font-size: 16px;
+            margin-top: 10px;
+            color: #ddd;
+        }
+
+        /* --- ABOUT US --- */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+            background: var(--bg-glass);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 40px;
+            backdrop-filter: blur(5px);
+            border-radius: 12px;
+        }
+
+        .ceo-quote {
+            font-family: var(--font-poppins);
+            font-size: 18px;
+            line-height: 1.6;
+        }
+        .ceo-quote h4 {
+            font-size: 48px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        /* --- SERVICES --- */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+        }
+
+        .service-card {
+            background: var(--bg-glass);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 40px 30px;
+            border-radius: 4px;
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255,255,255,0.08);
+        }
+
+
+.service-icon {
+    width: 60px; /* Ajusta este tamaño según prefieras */
+    height: auto;
+    margin-bottom: 20px;
+    display: block; /* Asegura que se comporte bien en el layout */
+}
+
+        .service-card h3 {
+            font-family: var(--font-poppins);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .service-card p {
+            font-size: 15px;
+            color: #ccc;
+            margin-bottom: 30px;
+            min-height: 50px;
+        }
+
+        .view-plans-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: 1px solid var(--text-white);
+            border-radius: 4px;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        .view-plans-btn:hover { background: var(--primary-red); border-color: var(--primary-red); }
+
+        /* --- STATS BAR --- */
+        .stats-bar {
+            background: #111;
+            padding: 50px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .stat-item h3 {
+            font-family: var(--font-poppins);
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--primary-red);
+        }
+        .stat-item.gray h3 { color: var(--text-gray); }
+        .stat-item p {
+            font-family: var(--font-inter);
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        /* --- FEATURED WORK --- */
+        .work-container {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+        }
+
+        .work-list {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .work-item {
+            cursor: pointer;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #333;
+            transition: 0.3s;
+        }
+
+        .work-item:hover { border-bottom-color: var(--primary-red); }
+
+        .work-item h3 {
+            font-family: var(--font-poppins);
+            font-size: 32px;
+            font-weight: 500;
+            color: var(--text-gray);
+            transition: 0.3s;
+        }
+        
+        .work-item.active h3 { color: var(--primary-red); }
+        .work-item:hover h3 { color: var(--text-white); }
+
+        .work-preview {
+            flex: 1.5;
+        }
+        .work-preview img {
+            border-radius: 12px;
+            width: 100%;
+            height: 450px;
+            object-fit: cover;
+        }
+
+        /* --- CUSTOMERS --- */
+        .customer-container {
+            display: flex;
+            gap: 50px;
+        }
+        .customer-intro { flex: 1; }
+        .customer-reviews { flex: 1.5; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        
+        .review-card {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .quote-icon { color: var(--primary-red); font-size: 30px; margin-bottom: 10px; }
+        .review-text {
+            font-family: var(--font-poppins);
+            font-weight: 300;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .reviewer {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .reviewer img { width: 48px; height: 48px; border-radius: 50%; }
+        .reviewer-info h5 { color: var(--primary-red); font-weight: 500; }
+        .reviewer-info span { font-size: 12px; color: #aaa; }
+
+        /* --- ESTIMATOR --- */
+        #estimator {
+            text-align: center;
+        }
+        
+        .estimator-grid {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 50px;
+            flex-wrap: wrap;
+        }
+
+        .plan-card {
+            width: 350px;
+            height: 500px;
+            background: var(--bg-glass);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 40px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: 0.4s;
+        }
+        
+        .plan-card:hover { transform: scale(1.02); background: rgba(255,255,255,0.1); }
+        .plan-card h3 { font-size: 40px; font-weight: 600; margin-bottom: 20px; z-index: 2; }
+        .plan-card img { width: 150px; z-index: 2; margin-bottom: 50px;}
+
+        /* --- FOOTER --- */
+        footer {
+            background: #111;
+            padding: 80px 5% 30px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 40px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 60px;
+            margin-bottom: 30px;
+        }
+
+        .footer-brand { flex: 1; min-width: 300px; }
+        .footer-brand p { margin: 20px 0; font-size: 15px; color: #ccc; }
+        
+        .newsletter { display: flex; }
+        .newsletter input {
+            background: transparent;
+            border: 1px solid var(--primary-red);
+            padding: 15px;
+            color: #fff;
+            flex: 1;
+        }
+        .newsletter button {
+            background: var(--primary-red);
+            border: none;
+            padding: 15px 30px;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .footer-links h4 { color: var(--primary-red); font-size: 20px; margin-bottom: 20px; }
+        .footer-links ul li { margin-bottom: 10px; font-size: 14px; }
+        .footer-links ul li a:hover { color: var(--primary-red); }
+
+        .footer-bottom { text-align: center; font-size: 13px; color: #777; }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 900px) {
+            .hero, .about-grid, .work-container, .customer-container, .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .hero h1 { font-size: 48px; }
+            .hero-image img { width: 300px; }
+            .about-grid { grid-template-columns: 1fr; }
+            .work-preview { width: 100%; order: -1; }
+            .customer-reviews { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glow-blob" style="top: -200px; left: -200px;"></div>
+    <div class="glow-blob" style="top: 400px; right: -200px;"></div>
+
+    <nav class="navbar">
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="logo">
+            <img src=".\resources\3aa4365042f4f5dd3dcc71376c90059efe04a068.png" alt="DXZ Software">
+        </div>
+        <a href="#estimator" class="cta-btn-nav">Get an Estimate</a>
+    </nav>
+
+    <div class="menu-overlay" id="menuOverlay">
+        <div class="close-menu" onclick="toggleMenu()">&times;</div>
+        <div class="menu-content">
+            <a href="#about" class="menu-link" onclick="toggleMenu()">About Us</a>
+            <a href="#services" class="menu-link" onclick="toggleMenu()">Services</a>
+            <a href="#work" class="menu-link" onclick="toggleMenu()">Our Work</a>
+            <a href="#customers" class="menu-link" onclick="toggleMenu()">Customers</a>
+            <a href="#estimator" class="menu-link" onclick="toggleMenu()">Estimator</a>
+        </div>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content reveal">
+            <h2>Secure, Scalable, Smarter</h2>
+            <h1>Software, Media <br> <span>& Marketing</span></h1>
+            <h3>For Everyone!</h3>
+            <p>From custom apps to digital campaigns — we power your growth.</p>
+            <a href="#estimator" class="hero-btn">Let's Build &rarr;</a>
+        </div>
+        <div class="hero-image reveal">
+            <img src="resources\6ffc4e430d6f95773ec8b5033c42f5642664f774.png" alt="Hero">
+        </div>
+    </section>
+
+    <section id="about">
+        <div class="section-header reveal">
+            <h2 class="section-title">About <span class="text-red">Us</span></h2>
+            <p class="section-subtitle">Building Technology That Works Smarter for You</p>
+        </div>
+        <div class="about-grid reveal">
+            <div class="ceo-image">
+                <img src="resources\ee234ab99bc4dd4cfb6ae307f3cb93d7e7dd3b85.png" alt="CEO" style="border-radius: 8px;">
+            </div>
+            <div class="ceo-quote">
+                <h4>Meet the CEO</h4>
+                <p>> I'm a passionate technology and digital innovation professional. Through Dxz Software, I combine creativity and engineering to deliver secure, scalable, and fully customized solutions.<br><br>
+                My mission is to help businesses transform ideas into intelligent systems and digital strategies that deliver real results.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="stats-bar reveal">
+        <div class="stat-item">
+            <h3>384+</h3>
+            <p>Projects Delivered</p>
+        </div>
+        <div class="stat-item gray">
+            <h3>30+</h3>
+            <p>Developers</p>
+        </div>
+        <div class="stat-item gray">
+            <h3>8839+</h3>
+            <p>Hours Worked</p>
+        </div>
+        <div class="stat-item gray">
+            <h3>15+</h3>
+            <p>Global Footprints</p>
+        </div>
+    </div>
+<section id="services">
+    <div class="section-header reveal">
+        <h2 class="section-title">Our <span class="text-red">Services</span></h2>
+        <p class="section-subtitle">We Offer Full Stack Development For Digital Innovation</p>
+    </div>
+    <div class="services-grid">
+        
+        <div class="service-card reveal">
+            <img src="resources/Component 10 (2).svg" class="service-icon" alt="Website Icon">
+            <h3>Website Build</h3>
+            <p>Build robust, tailored webpages that align perfectly with your business needs.</p>
+            <a href="#estimator" class="view-plans-btn">View Plans &rarr;</a>
+            <div style="margin-top:10px; font-size:13px; color:#aaa;">Starting at $99</div>
+        </div>
+
+        <div class="service-card reveal">
+            <img src="resources\Frame 260.svg" class="service-icon" alt="App Development Icon">
+            <h3>iOS & Android</h3>
+            <p>We build comprehensive Android and iOS apps that meet your complex business needs.</p>
+            <a href="#estimator" class="view-plans-btn">View Plans &rarr;</a>
+            <div style="margin-top:10px; font-size:13px; color:#aaa;">Starting at $99</div>
+        </div>
+
+        <div class="service-card reveal">
+            <img src="resources\Frame 261.svg" class="service-icon" alt="Marketing Icon">
+            <h3>Digital Marketing</h3>
+            <p>Transform your brand with our app development, enterprise CMS, and emerging tech solutions.</p>
+            <a href="#estimator" class="view-plans-btn">View Plans &rarr;</a>
+            <div style="margin-top:10px; font-size:13px; color:#aaa;">Starting at $99</div>
+        </div>
+
+         <div class="service-card reveal">
+            <img src="resources\Component 11.svg" class="service-icon" alt="Data Icon">
+            <h3>Data & Analytics</h3>
+            <p>Turn raw data into real-time insights and smarter decision-making.</p>
+            <a href="#estimator" class="view-plans-btn">View Plans &rarr;</a>
+            <div style="margin-top:10px; font-size:13px; color:#aaa;">Starting at $99</div>
+        </div>
+
+        <div class="service-card reveal">
+            <img src="resources\Component 10 (1).svg" class="service-icon" alt="Automation Icon">
+            <h3>Automation</h3>
+            <p>Streamline workflows, reduce costs, and boost productivity through intelligent automation.</p>
+            <a href="#estimator" class="view-plans-btn">View Plans &rarr;</a>
+            <div style="margin-top:10px; font-size:13px; color:#aaa;">Starting at $99</div>
+        </div>
+
+        <div class="service-card reveal">
+            <img src="resources\Component 10.svg" class="service-icon" alt="Consulting Icon">
+            <h3>IT Advisory</h3>
+            <p>Get expert guidance for your digital transformation journey.</p>
+            <a href="#estimator" class="view-plans-btn">View Plans &rarr;</a>
+            <div style="margin-top:10px; font-size:13px; color:#aaa;">Starting at $99</div>
+        </div>
+
+    </div>
+</section>
+
+    <section id="work">
+        <div class="section-header reveal">
+            <h2 class="section-title">Featured <span class="text-red">Work</span></h2>
+        </div>
+        <div class="work-container reveal">
+            <div class="work-list">
+                <div class="work-item active">
+                    <h3 class="text-red">Grupo Cosstruye</h3>
+                    <p>Case Study</p>
+                </div>
+                <div class="work-item">
+                    <h3>ULAL México</h3>
+                    <p>Case Study</p>
+                </div>
+                <div class="work-item">
+                    <h3>GrupoJaco</h3>
+                    <p>Case Study</p>
+                </div>
+            </div>
+            <div class="work-preview">
+                <img src="resources\709388e9f77bb1274ff83acf73a1102661360872.png" alt="Project Preview">
+            </div>
+        </div>
+        
+        <div class="reveal" style="margin-top: 50px; background: #111; padding: 40px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h2 style="font-size: 36px; font-weight: 700;">Ready to <span class="text-red">Innovate</span></h2>
+                <p style="margin-top: 10px;">Contact us to schedule an in-depth discussion about your project.</p>
+            </div>
+            <a href="#estimator" class="hero-btn">Let's Connect &rarr;</a>
+        </div>
+    </section>
+
+    <section id="customers">
+        <div class="customer-container reveal">
+            <div class="customer-intro">
+                <h2 class="section-title">Our <span class="text-red">Customer</span></h2>
+                <p>See what our customers say about us.</p>
+            </div>
+            <div class="customer-reviews">
+                <div class="review-card">
+                    <div class="quote-icon">❝</div>
+                    <p class="review-text">I am very proud of the team at DevDimensions, they are a very smart group of people and I highly recommend them.</p>
+                    <div class="reviewer">
+                        <img src="resources\Ellipse 87 (1).svg" alt="User">
+                        <div class="reviewer-info">
+                            <h5>Tilly Firth</h5>
+                            <span>Co-founder & CEO, Impala</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="review-card">
+                    <div class="quote-icon">❝</div>
+                    <p class="review-text">I am very proud of the team at DevDimensions, they are a very smart group of people and I highly recommend them.</p>
+                    <div class="reviewer">
+                        <img src="resources\Ellipse 87.svg" alt="User">
+                        <div class="reviewer-info">
+                            <h5>Paul McGruire</h5>
+                            <span>Co-founder & CEO, Tru.id</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="estimator">
+        <div class="section-header reveal">
+            <h2 class="section-title">What We'll <span class="text-red">Build Today?</span></h2>
+            <p>Not sure where to start? Our system will guide you through.</p>
+        </div>
+        
+        <div class="estimator-grid reveal">
+            <div class="plan-card">
+                <h3>Service 1</h3>
+                <img src="resources\b8b83418709eb7b6999f6854afaa6658f7073b75.png" alt="Icon">
+                <a href="#" class="view-plans-btn">View Plans &rarr;</a>
+            </div>
+            <div class="plan-card">
+                <h3>Service 2</h3>
+                <img src="resources\b8b83418709eb7b6999f6854afaa6658f7073b75.png" alt="Icon">
+                <a href="#" class="view-plans-btn">View Plans &rarr;</a>
+            </div>
+            <div class="plan-card">
+                <h3>Service 3</h3>
+                <img src="resources\b8b83418709eb7b6999f6854afaa6658f7073b75.png" alt="Icon">
+                <a href="#" class="view-plans-btn">View Plans &rarr;</a>
+            </div>
+        </div>
+        <div style="margin-top: 30px; text-align: center;">Starting at $99</div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <img src="https://placehold.co/139x70/111/FFF?text=DXZ" alt="DXZ Logo">
+                <p>We believe in growing together by empowering businesses through technologies and fulfilling their complex software needs.</p>
+                <div class="newsletter">
+                    <input type="email" placeholder="Enter your email">
+                    <button>Join</button>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h4>Links</h4>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#work">Case Studies</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Services</h4>
+                <ul>
+                    <li><a href="#">UI/UX</a></li>
+                    <li><a href="#">Web Development</a></li>
+                    <li><a href="#">Mobile Application</a></li>
+                    <li><a href="#">SEO</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Address</h4>
+                <ul>
+                    <li>info@dxzsoftware.com</li>
+                    <li>4140 Jesus Garcia<br>Cuauhtémoc, Chih 31530</li>
+                    <li>+52 33 1211 4390</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            ©2025-DXZ Software | All Rights Reserved
+        </div>
+    </footer>
+
+    <script>
+        // Hamburger Menu Toggle
+        function toggleMenu() {
+            const overlay = document.getElementById('menuOverlay');
+            overlay.classList.toggle('open');
+            document.body.style.overflow = overlay.classList.contains('open') ? 'hidden' : 'auto';
+        }
+
+        // Scroll Reveal Animation
+        window.addEventListener('scroll', reveal);
+
+        function reveal() {
+            var reveals = document.querySelectorAll('.reveal');
+
+            for (var i = 0; i < reveals.length; i++) {
+                var windowheight = window.innerHeight;
+                var revealtop = reveals[i].getBoundingClientRect().top;
+                var revealpoint = 150;
+
+                if (revealtop < windowheight - revealpoint) {
+                    reveals[i].classList.add('active');
+                } else {
+                    reveals[i].classList.remove('active');
+                }
+            }
+        }
+        
+        // Trigger once on load
+        reveal();
+    </script>
+
+</body>
+</html>
