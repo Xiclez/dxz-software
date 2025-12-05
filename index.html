@@ -524,6 +524,38 @@
 
         .footer-bottom { text-align: center; font-size: 13px; color: #777; }
 
+        /* Estilo base de la imagen */
+.work-preview img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px; /* Opcional: bordes redondeados */
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+}
+
+/* Clase que aplicaremos con JS para ocultar la imagen */
+.work-preview img.fade-out {
+    opacity: 0;
+    transform: scale(0.95); /* Un pequeño efecto de zoom out al cambiar */
+}
+
+/* Estilos para que el cursor muestre que es clicable */
+.work-item {
+    cursor: pointer;
+    padding: 10px;
+    border-left: 3px solid transparent;
+    transition: all 0.3s;
+}
+
+.work-item:hover {
+    background-color: rgba(255, 0, 0, 0.05); /* Color sutil al pasar mouse */
+}
+
+/* Indicador visual del item activo */
+.work-item.active {
+    border-left: 3px solid red; /* Línea roja a la izquierda */
+}
         /* --- RESPONSIVE --- */
         @media (max-width: 900px) {
             .hero, .about-grid, .work-container, .customer-container, .footer-content {
@@ -673,37 +705,32 @@
 </section>
 
     <section id="work">
-        <div class="section-header reveal">
-            <h2 class="section-title">Featured <span class="text-red">Work</span></h2>
-        </div>
-        <div class="work-container reveal">
-            <div class="work-list">
-                <div class="work-item active">
-                    <h3 class="text-red">Grupo Cosstruye</h3>
-                    <p>Case Study</p>
-                </div>
-                <div class="work-item">
-                    <h3>ULAL México</h3>
-                    <p>Case Study</p>
-                </div>
-                <div class="work-item">
-                    <h3>GrupoJaco</h3>
-                    <p>Case Study</p>
-                </div>
+    <div class="section-header reveal">
+        <h2 class="section-title">Featured <span class="text-red">Work</span></h2>
+    </div>
+    <div class="work-container reveal">
+        <div class="work-list">
+            <div class="work-item active" data-img="resources/709388e9f77bb1274ff83acf73a1102661360872.png">
+                <h3 class="text-red">Grupo Cosstruye</h3>
+                <p>Case Study</p>
             </div>
-            <div class="work-preview">
-                <img src="resources\709388e9f77bb1274ff83acf73a1102661360872.png" alt="Project Preview">
+            
+            <div class="work-item" data-img="resources\Screenshot 2025-12-05 155153.png">
+                <h3>ULAL México</h3>
+                <p>Case Study</p>
+            </div>
+            
+            <div class="work-item" data-img="resources\Screenshot 2025-12-05 155120.png">
+                <h3>GrupoJaco</h3>
+                <p>Case Study</p>
             </div>
         </div>
         
-        <div class="reveal" style="margin-top: 50px; background: #111; padding: 40px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <h2 style="font-size: 36px; font-weight: 700;">Ready to <span class="text-red">Innovate</span></h2>
-                <p style="margin-top: 10px;">Contact us to schedule an in-depth discussion about your project.</p>
-            </div>
-            <a href="#estimator" class="hero-btn">Let's Connect &rarr;</a>
+        <div class="work-preview">
+            <img id="preview-img" src="resources/709388e9f77bb1274ff83acf73a1102661360872.png" alt="Project Preview">
         </div>
-    </section>
+    </div>
+</section>
 
     <section id="customers">
         <div class="customer-container reveal">
@@ -739,30 +766,276 @@
     </section>
 
     <section id="estimator">
-        <div class="section-header reveal">
-            <h2 class="section-title">What We'll <span class="text-red">Build Today?</span></h2>
-            <p>Not sure where to start? Our system will guide you through.</p>
+    <div class="section-header reveal">
+        <h2 class="section-title">AI <span class="text-red">Estimator</span></h2>
+        <p class="section-subtitle">Chat with our AI agent to get an instant budget range for your project.</p>
+    </div>
+
+    <div class="chat-container reveal">
+        <div class="chat-header">
+            <div class="status-dot"></div>
+            <span>DXZ Agent (Online)</span>
         </div>
         
-        <div class="estimator-grid reveal">
-            <div class="plan-card">
-                <h3>Service 1</h3>
-                <img src="resources\b8b83418709eb7b6999f6854afaa6658f7073b75.png" alt="Icon">
-                <a href="#" class="view-plans-btn">View Plans &rarr;</a>
-            </div>
-            <div class="plan-card">
-                <h3>Service 2</h3>
-                <img src="resources\b8b83418709eb7b6999f6854afaa6658f7073b75.png" alt="Icon">
-                <a href="#" class="view-plans-btn">View Plans &rarr;</a>
-            </div>
-            <div class="plan-card">
-                <h3>Service 3</h3>
-                <img src="resources\b8b83418709eb7b6999f6854afaa6658f7073b75.png" alt="Icon">
-                <a href="#" class="view-plans-btn">View Plans &rarr;</a>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot-message">
+                <div class="message-content">
+                    Hola, soy la IA de DXZ Software. 🤖<br>
+                    Cuéntame, ¿qué te gustaría construir hoy? (Ej. Una App móvil, una Landing Page, un E-commerce...)
+                </div>
             </div>
         </div>
-        <div style="margin-top: 30px; text-align: center;">Starting at $99</div>
-    </section>
+
+        <div class="chat-input-area">
+            <input type="text" id="userInput" placeholder="Type your idea here..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()" id="sendBtn">
+                Send &rarr;
+            </button>
+        </div>
+        <div class="typing-indicator" id="typingIndicator">DXZ Bot is typing...</div>
+    </div>
+
+    <style>
+        /* ESTILOS ESPECÍFICOS DEL CHAT */
+        .chat-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            height: 600px; /* Altura fija para el chat */
+        }
+
+        .chat-header {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-family: var(--font-poppins);
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #00FF00;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00FF00;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            scroll-behavior: smooth;
+        }
+
+        .message {
+            display: flex;
+            width: 100%;
+        }
+
+        .message-content {
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 15px;
+            line-height: 1.5;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        /* Estilo Bot */
+        .bot-message { justify-content: flex-start; }
+        .bot-message .message-content {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ddd;
+            border-bottom-left-radius: 2px;
+        }
+
+        /* Estilo Usuario */
+        .user-message { justify-content: flex-end; }
+        .user-message .message-content {
+            background: var(--primary-red);
+            color: white;
+            border-bottom-right-radius: 2px;
+            box-shadow: 0 4px 15px rgba(252, 63, 55, 0.3);
+        }
+
+        .chat-input-area {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            color: white;
+            font-family: var(--font-montserrat);
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .chat-input-area input:focus {
+            border-color: var(--primary-red);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-input-area button {
+            background: var(--text-white);
+            color: black;
+            border: none;
+            padding: 0 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .chat-input-area button:hover {
+            background: var(--primary-red);
+            color: white;
+        }
+
+        .typing-indicator {
+            padding: 0 20px 10px;
+            font-size: 12px;
+            color: #777;
+            display: none; /* Oculto por defecto */
+        }
+        
+        /* Scrollbar personalizado */
+        .chat-messages::-webkit-scrollbar { width: 6px; }
+        .chat-messages::-webkit-scrollbar-track { background: transparent; }
+        .chat-messages::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+    </style>
+
+    <script>
+        // --- LÓGICA DE CHAT & COOKIES ---
+        
+        // 1. Configuración de Cookies
+        function setCookie(name, value, days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            const expires = "expires=" + date.toUTCString();
+            document.cookie = name + "=" + JSON.stringify(value) + ";" + expires + ";path=/";
+        }
+
+        function getCookie(name) {
+            const cname = name + "=";
+            const decodedCookie = decodeURIComponent(document.cookie);
+            const ca = decodedCookie.split(';');
+            for(let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1);
+                if (c.indexOf(cname) == 0) {
+                    return JSON.parse(c.substring(cname.length, c.length));
+                }
+            }
+            return []; // Retorna array vacío si no hay cookie
+        }
+
+        // 2. Estado del Chat (Cargar historial al iniciar)
+        // Estructura para Gemini: { role: "user" | "model", parts: [{ text: "..." }] }
+        let chatHistory = getCookie("dxz_chat_history") || [];
+        
+        // Renderizar historial guardado si existe
+        window.addEventListener('load', () => {
+            if(chatHistory.length > 0) {
+                const chatBox = document.getElementById('chatMessages');
+                // Limpiar mensaje de bienvenida por defecto si hay historial
+                chatBox.innerHTML = ''; 
+                
+                chatHistory.forEach(msg => {
+                    const type = msg.role === 'user' ? 'user-message' : 'bot-message';
+                    appendMessageToUI(msg.parts[0].text, type);
+                });
+            }
+        });
+
+        // 3. Funciones de Envío
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            // Mostrar mensaje usuario
+            appendMessageToUI(message, 'user-message');
+            input.value = '';
+            
+            // Mostrar indicador "Escribiendo..."
+            document.getElementById('typingIndicator').style.display = 'block';
+
+            try {
+                // Preparar historial para enviar al backend (excluyendo el mensaje actual que se manda en 'message')
+                // NOTA: Reemplaza la URL con tu backend real (localhost:3000 o tu URL de deploy)
+                const response = await fetch('https://dxzsoftware-ai.vercel.app/api/chat', { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        history: chatHistory, 
+                        message: message 
+                    })
+                });
+
+                const data = await response.json();
+                
+                // Ocultar indicador
+                document.getElementById('typingIndicator').style.display = 'none';
+
+                if (data.reply) {
+                    appendMessageToUI(data.reply, 'bot-message');
+                    
+                    // Actualizar Historial
+                    chatHistory.push({ role: "user", parts: [{ text: message }] });
+                    chatHistory.push({ role: "model", parts: [{ text: data.reply }] });
+                    
+                    // Guardar en Cookie (7 días)
+                    setCookie("dxz_chat_history", chatHistory, 7);
+                }
+
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById('typingIndicator').style.display = 'none';
+                appendMessageToUI("Lo siento, hubo un error de conexión. Intenta de nuevo.", 'bot-message');
+            }
+        }
+
+        function appendMessageToUI(text, className) {
+            const chatBox = document.getElementById('chatMessages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${className}`;
+            
+            // Convertir saltos de línea a <br>
+            const formattedText = text.replace(/\n/g, '<br>');
+            
+            msgDiv.innerHTML = `<div class="message-content">${formattedText}</div>`;
+            chatBox.appendChild(msgDiv);
+            
+            // Auto scroll al fondo
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+    </script>
+</section>
 
     <footer>
         <div class="footer-content">
